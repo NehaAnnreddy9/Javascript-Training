@@ -55,17 +55,24 @@ const Controller = ((view, model) => {
             }
 
         })
+    
+        const resetBoard = () => {
+            for(let i=1;i<13; i++){
+                document.getElementById(i.toString()).style.visibility = "hidden"
+            }
+        }
 
         const setTimer = () =>{ //to set timer and display time left
             timer = 30
             return x = setInterval(() => {
-                if(timer > 0){
+                if(timer > -1){
                     domSelector.timel.innerHTML = timer
                     timer = timer - 1
                 }
                 else{
                     clearInterval(x)
                     alert("Time is over!");
+                    resetBoard()
                 }
             },1000)
             return x
@@ -75,9 +82,8 @@ const Controller = ((view, model) => {
             domSelector.startg.addEventListener('click', () => {
                 domSelector.timel.innerHTML = 30
                 domSelector.scoreb.innerHTML = 0
-                for(let i=1;i<13; i++){
-                    document.getElementById(i.toString()).style.visibility = "hidden"
-                }
+                resetBoard()
+                score = 0
                 const one = rand(0)
                 const two = rand(one)
                 const three = rand(two)
