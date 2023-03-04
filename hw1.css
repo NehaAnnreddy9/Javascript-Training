@@ -1,0 +1,43 @@
+body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-left: 36%;
+    padding-right: 36%;
+}
+
+#agree{
+    width: 77%;
+    font-size: smaller;
+    text-align: center;
+    display: flex;
+    flex-direction : row;
+    justify-content: space-between
+}
+
+#tc{
+    color: lightskyblue;
+}
+
+#reg{
+    border-style: solid #528AAE;
+    background: #528AAE;
+    color: white;
+}
+
+#register{
+    border-color: #528AAE;
+    background-color: #528AAE;
+}
+
+#signin{
+    border-color: #54e90f;
+    background-color: #54e90f;   
+}
+
+#mobile,#email{
+    width: 71%
+}
+
+
+
