@@ -13,28 +13,45 @@ const View = (()=>{
         const img = document.getElementById(ele.toString())
         img.style.visibility = 'visible'
     }
-    
+
+    const hide = (ele) =>{
+        document.getElementById(ele).style.visibility = "hidden"
+    }
+
+    const renderTime = (timer) =>{
+        domSelector.timel.innerHTML = timer
+    }
+
+    const renderScore = (score) =>{
+        domSelector.scoreb.innerHTML = score
+    }
+
     return {
         domSelector,
-        render
+        render,
+        hide,
+        renderTime, renderScore
     }
 })()
 
 
 const Model = ((view) => {
 
-    const {render} = view
-    const objs = [0,0,0,0,0,0,0,0,0,0,0,0] //Added array to store status of objects by index
+    const {domSelector,render,hide,renderTime, renderScore} = view
 
-    const rand = () => {  //select random id
-        r = Math.floor(Math.random() * (12 - 1 + 1) + 1); //Added min range 
-        while(objs[r-1] == 1)       //To make sure that there are exactly 3 moles at a time
+    let objs = [{id:1,status:0},{id:2,status:0},{id:3,status:0},{id:4,status:0},{id:5,status:0},{id:6,status:0},{id:7,status:0},
+        {id:8,status:0},{id:9,status:0},{id:10,status:0},{id:11,status:0},{id:12,status:0}]
+
+    const rand = () => { //select random id
+        r = Math.floor(Math.random() * (12 - 1 + 1) + 1);
+        while(objs[r-1].status == 1)
         {
             r = Math.floor(Math.random() * (12 - 1 + 1) + 1);
         }
-        objs[r-1] = 1
+        objs[r-1].status = 1
         return r
     }
+
     return {
         rand,
         objs
@@ -44,27 +61,28 @@ const Model = ((view) => {
 
 const Controller = ((view, model) => {
 
-        const {domSelector,render} = view
+        const {domSelector,render,hide,renderTime,renderScore} = view
         const {rand,objs} = model
         let score = 0
+        let timer
 
-        domSelector.cir.addEventListener('mouseover',(event)=>{ //To make image dissappear on mouseover(previously kept click as event)
+        domSelector.cir.addEventListener('click',(event)=>{ //function to make image dissappear on click
             let id = event.target.id
-            if(objs[Number(id)-1] == 1){ //check if clicked on visible image
+            if(id != "" && objs[Number(id)-1].status == 1){ //check if clicked on visible image
                 score = score + 1
-                domSelector.scoreb.innerHTML = score
-                document.getElementById(id).style.visibility = "hidden"
+                renderScore(score)
+                hide(id)
                 let re = rand()
-                objs[Number(id)-1] = 0 //Changed status back to 0
+                objs[Number(id)-1].status = 0
                 render(re)
             }
 
         })
 
-        const resetBoard = () => {   
+        const resetBoard = () => {
             for(let i=1;i<13; i++){
-                document.getElementById(i.toString()).style.visibility = "hidden"
-                objs[i-1] = 0
+                hide(i.toString())
+                objs[i-1].status = 0
             }
         }
 
@@ -72,11 +90,12 @@ const Controller = ((view, model) => {
             timer = 30
             return x = setInterval(() => {
                 if(timer > -1){
-                    domSelector.timel.innerHTML = timer
+                    renderTime(timer)
                     timer = timer - 1
                 }
                 else{
                     clearInterval(x)
+                    timer = 30
                     alert("Time is over!");
                     resetBoard() //reset board
                 }
@@ -86,8 +105,11 @@ const Controller = ((view, model) => {
 
         const bootstrap = () => {//bootstrap to start game
             domSelector.startg.addEventListener('click', () => {
-                domSelector.timel.innerHTML = 30
-                domSelector.scoreb.innerHTML = 0
+                if(timer != undefined && timer > -1){
+                    clearInterval(x)
+                }
+                renderTime(30)
+                renderScore(0)
                 resetBoard() //reset board
                 score = 0 //added score to zero
                 const one = rand()
@@ -96,7 +118,6 @@ const Controller = ((view, model) => {
                 render(one)
                 render(two)
                 render(three)
-                
                 setTimer()
             })
         }
