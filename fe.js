@@ -13,6 +13,7 @@ const View = (()=>{
         const img = document.getElementById(ele.toString())
         img.style.visibility = 'visible'
     }
+    
     return {
         domSelector,
         render
@@ -23,17 +24,20 @@ const View = (()=>{
 const Model = ((view) => {
 
     const {render} = view
+    const objs = [0,0,0,0,0,0,0,0,0,0,0,0] //Added array to store status of objects by index
 
-    const rand = (pos) => { //select random id
-        r = Math.floor(Math.random() * 12)
-        if (r == pos || r == 0 )
+    const rand = () => {  //select random id
+        r = Math.floor(Math.random() * (12 - 1 + 1) + 1); //Added min range 
+        while(objs[r-1] == 1)       //To make sure that there are exactly 3 moles at a time
         {
-            return r + 1
+            r = Math.floor(Math.random() * (12 - 1 + 1) + 1);
         }
+        objs[r-1] = 1
         return r
     }
     return {
-        rand
+        rand,
+        objs
     }
 })(View)
 
@@ -41,24 +45,26 @@ const Model = ((view) => {
 const Controller = ((view, model) => {
 
         const {domSelector,render} = view
-        const {rand} = model
+        const {rand,objs} = model
         let score = 0
 
-        domSelector.cir.addEventListener('click',(event)=>{ //function to make image dissappear on click
-            const id = event.target.id
-            if(document.getElementById(id).style.visibility == "visible"){ //check if clicked on visible image
+        domSelector.cir.addEventListener('mouseover',(event)=>{ //To make image dissappear on mouseover(previously kept click as event)
+            let id = event.target.id
+            if(objs[Number(id)-1] == 1){ //check if clicked on visible image
                 score = score + 1
                 domSelector.scoreb.innerHTML = score
                 document.getElementById(id).style.visibility = "hidden"
-                const re = rand(id)
+                let re = rand()
+                objs[Number(id)-1] = 0 //Changed status back to 0
                 render(re)
             }
 
         })
-    
-        const resetBoard = () => {
+
+        const resetBoard = () => {   
             for(let i=1;i<13; i++){
                 document.getElementById(i.toString()).style.visibility = "hidden"
+                objs[i-1] = 0
             }
         }
 
@@ -72,7 +78,7 @@ const Controller = ((view, model) => {
                 else{
                     clearInterval(x)
                     alert("Time is over!");
-                    resetBoard()
+                    resetBoard() //reset board
                 }
             },1000)
             return x
@@ -82,14 +88,15 @@ const Controller = ((view, model) => {
             domSelector.startg.addEventListener('click', () => {
                 domSelector.timel.innerHTML = 30
                 domSelector.scoreb.innerHTML = 0
-                resetBoard()
-                score = 0
-                const one = rand(0)
-                const two = rand(one)
-                const three = rand(two)
+                resetBoard() //reset board
+                score = 0 //added score to zero
+                const one = rand()
+                const two = rand()
+                const three = rand()
                 render(one)
                 render(two)
                 render(three)
+                
                 setTimer()
             })
         }
@@ -101,63 +108,3 @@ const Controller = ((view, model) => {
 Controller.bootstrap()
 
 
-
-
-
-
-
-
-
-
-    /*
-    const setTimer = () =>{
-        timer = 3
-        return x = setInterval(() => {
-            console.log(timer)
-            if(timer > 0){
-                timer = timer - 1
-            }
-            else{
-                clearInterval(x)
-            }
-        },1000)
-        return x
-    }
-
-    */
-
-    /*
-    domSelector.startg.addEventListener('click', () => {
-
-        // domSelector.inputForm.value
-        const newList = [...state.dataList, { title: domSelector.inputForm.value }]
-        state.dataList = newList
-        // console.log(domSelector.inputForm.value)
-    })*/
-
-    /*const setTimer = () =>{
-            return setInterval(() => {
-                if(timer > 0){
-                    timer--
-                }
-                else{
-                    clearInterval(x)
-                }
-            },1000)
-        }*/
-
-    //const objs = [{id:1,status:0},{id:2,status:0},{id:3,status:0},{id:4,status:0},{id:5,status:0},{id:6,status:0},{id:7,status:0},
-       // {id:8,status:0},{id:9,status:0},{id:10,status:0},{id:11,status:0},{id:12,status:0}]
-
-    /*const rand = () => {
-            let arr = []
-            max = 3
-            while(max!=0){
-                arr.push(Math.floor(Math.random() * 12) + 1)
-                max = max - 1
-            }
-            console.log(arr)
-    }*/
-
-
-    
